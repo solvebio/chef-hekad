@@ -52,7 +52,7 @@ class Chef::Provider
   class HekaConfig < Chef::Provider
     def initialize(*args)
       super
-      # Chef::Resource::ChefGem.new('toml', run_context).run_action(:install)
+      Chef::Resource::ChefGem.new('toml', run_context).run_action(:install)
       @cfg = Chef::Resource::File.new(
         "heka_config_#{new_resource.name}",
         run_context
