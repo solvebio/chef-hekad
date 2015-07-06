@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'berkshelf'
+gem 'toml'
 
 group :test do
   gem 'rake'
