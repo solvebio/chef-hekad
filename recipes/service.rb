@@ -55,8 +55,8 @@ cookbook_file '/etc/init.d/hekad' do
   source 'hekad.sysv'
   mode '0755'
   not_if do
-    platform_family?('rhel') ||
-    ::File.exist?('/etc/init')
+    platform_family?('rhel') # ||
+      # ::File.exist?('/etc/init')
   end
   notifies :restart, 'service[hekad]', :delayed
 end
