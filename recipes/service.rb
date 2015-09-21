@@ -34,36 +34,40 @@ directory '/var/cache/hekad' do
   recursive true
 end
 
-# Fedora, CentOS >= 7, Ubuntu >= 15.04, Debian >= 8
-# cookbook_file '/etc/systemd/system/hekad.service' do
-#  source 'hekad.service'
-#  only_if { ::File.directory?('/etc/systemd/system') }
-#  not_if { ::File.directory?('/etc/init') && !platform?('debian') }
-#  notifies :restart, 'service[hekad]', :delayed
-# end
+# systemd
+systemd_service 'hekad' do
+  description 'general purpose data acquisition and processing engine'
+  documentation 'man:hekad(1) https://hekad.readthedocs.org/'
+  install do
+    wanted_by 'multi-user.target'
+    aliases %w( heka )
+  end
+  service do
+    user 'heka'
+    group 'heka'
+    exec_start '/usr/bin/hekad -config=/etc/heka'
+    restart 'on-failure'
+  end
+  only_if { systemd? }
+  notifies :restart, 'service[hekad]', :delayed
+end
 
-# CentOS 6
-# cookbook_file '/etc/init/hekad.conf' do
-#  source 'hekad.conf'
-#  only_if { ::File.directory?('/etc/init') }
-#  not_if { platform?('debian') && node['platform_version'].to_f >= 8.0 }
-#  notifies :restart, 'service[hekad]', :delayed
-# end
+# upstart
+cookbook_file '/etc/init/hekad.conf' do
+  source 'hekad.conf'
+  only_if { upstart? }
+  notifies :restart, 'service[hekad]', :delayed
+end
 
-# Ubuntu <= 15.04
+# sysv
 cookbook_file '/etc/init.d/hekad' do
   source 'hekad.sysv'
   mode '0755'
-  not_if do
-    platform_family?('rhel') # ||
-      # ::File.exist?('/etc/init')
-  end
+  not_if { systemd? || upstart? }
   notifies :restart, 'service[hekad]', :delayed
 end
 
 service 'hekad' do
-  # if ::File.exist?('/etc/init') && !platform?('debian')
-  #   provider Chef::Provider::Service::Upstart
-  # end
+  provider Chef::Provider::Service::Upstart if upstart?
   action [:enable, :start]
 end

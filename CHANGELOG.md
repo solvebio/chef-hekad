@@ -1,3 +1,29 @@
+# 2.0.2 / 2015-08-19
+
+* fix cops
+* notify service to restart on unit change
+* add mac_os_x support
+
+# 2.0.1 / 2015-08-19
+
+* fix systemd service definition
+
+# 2.0.0 / 2015-08-19
+
+* change version selection attributes (breaking change!)
+* use systemd cookbook to manage systemd service definition
+* clean up service provider selection rules
+
+# 1.0.0 / 2015-07-24
+
+* enforce plugin name uniqueness by using chef resource name.
+  note that this will break pre-existing configurations by
+  requiring (partial) flattening of the config hash
+
+# 0.3.3 / 2015-07-09
+
+* now with TOML 0.4.0 compatibility (thanks @funzoneq!)
+
 # 0.3.2 / 2015-07-06
 
 * update service provider selection
